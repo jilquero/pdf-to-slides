@@ -2,8 +2,8 @@ import typer
 
 from typing import Optional
 from typing_extensions import Annotated
-from pdf_to_slides import pdf_to_markdown
-from pdf_to_slides import markdown_to_json
+from .converters import pdf_to_markdown
+from .converters import markdown_to_json
 
 app = typer.Typer()
 
