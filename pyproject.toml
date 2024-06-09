@@ -5,8 +5,13 @@ description = ""
 authors = ["jilquero <szczygielski.mateusz@wp.pl>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+pts = "pdf_to_slides.main:app"
+
 [tool.poetry.dependencies]
 python = "^3.12"
+marker-pdf = "^0.2.13"
+typer = "^0.12.3"
 
 
 [build-system]
