@@ -12,7 +12,7 @@ def pdf_to_markdown(
     batch_multiplier: int = 2,
     start_page: int = None,
     max_pages: int = None,
-):
+) -> str:
     """
     Pdf and markdown to slides converter
     """
@@ -32,3 +32,4 @@ def pdf_to_markdown(
     path = save_markdown(output, filename, full_text, images, out_meta)
 
     print(f"Saved markdown to the {path} folder")
+    return path

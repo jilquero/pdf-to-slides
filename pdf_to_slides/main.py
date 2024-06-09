@@ -1,4 +1,5 @@
 import typer
+import tempfile
 
 from typing import Optional
 from typing_extensions import Annotated
@@ -45,3 +46,28 @@ def json(filename: Annotated[str, typer.Argument(help="Markdown file to parse")]
     Convert markdown to json
     """
     markdown_to_json(filename)
+
+
+@app.command()
+def pdf_to_json(
+    filename: Annotated[str, typer.Argument(help="Markdown file to parse")],
+    langs: Annotated[
+        Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
+    ] = None,
+    batch_multiplier: Annotated[
+        int, typer.Option(help="How much to increase batch sizes")
+    ] = 2,
+    start_page: Annotated[
+        Optional[int], typer.Option(help="Page to start processing at")
+    ] = None,
+    max_pages: Annotated[
+        Optional[int], typer.Option(help="Maximum number of pages to parse")
+    ] = None,
+):
+    """
+    Convert pdf to json
+    """
+    langs = langs.split(",") if langs else None
+    with tempfile.TemporaryDirectory() as tempdir:
+        path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
+        markdown_to_json(f"{path}/{path.split("/")[-1]}.md")
