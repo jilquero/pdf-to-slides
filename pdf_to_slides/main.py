@@ -5,8 +5,9 @@ from collections import Counter
 from heapq import nlargest
 import en_core_web_sm  # noqa: F401
 import xx_sent_ud_sm
-import pytextrank  # noqa: F401
-
+#import pytextrank  # noqa: F401
+import PyPDF2
+import os
 from typing import Optional
 from typing_extensions import Annotated
 from .converters import pdf_to_markdown
@@ -20,6 +21,28 @@ def callback():
     """
     Pdf and markdown to slides converter
     """
+
+# example cli 
+# pts merge ./input/bariery.pdf ./input/Pyt.pdf ./output/merged_output.pdf 
+@app.command()
+def merge(
+    pdf_files: Annotated[list[str], typer.Argument(help="List of PDF files to merge")],
+    output_filename: Annotated[str, typer.Argument(help="Output PDF file name")],
+):
+    """
+    Merge multiple PDF files into one.
+    """
+    pdf_merger = PyPDF2.PdfMerger()
+
+    for pdf in pdf_files:
+        if os.path.exists(pdf):
+            pdf_merger.append(pdf)
+        else:
+            print(f"File {pdf} does not exist and will be skipped.")
+    
+    with open(output_filename, 'wb') as output_file:
+        pdf_merger.write(output_file)
+    print(f"Merged PDF saved as {output_filename}")
 
 
 @app.command()
