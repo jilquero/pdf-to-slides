@@ -1,0 +1,18 @@
+\subsection{ {{- _("Conclusion") -}} }
+\begin{frame}
+\frametitle{}
+  \centering
+  \vfill
+  {{ _("Thank you for your attention!") }}
+  {% for author in authors %}
+  \begin{minipage}{0.45\textwidth}
+    \textbf{ {{- author.name -}} }\\
+    \href{mailto:{{- author.email -}}}{ {{- author.email -}} }
+  \end{minipage}
+  {% if loop.index % 2 %}
+  \hfill
+  {% else %}
+  \vfill
+  {% endif %}
+  {% endfor %}
+\end{frame}

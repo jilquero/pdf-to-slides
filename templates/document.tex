@@ -1,0 +1,25 @@
+\documentclass[red]{beamer}
+\usetheme{Bergen}%{Copenhagen}
+
+\usepackage{graphicx}
+\usepackage{cmap}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+
+{{title}}
+
+\section{ {{- _("Presentation") -}} }
+{% include 'agenda.tex' %}
+
+\section{ {{- _("Content") -}} }
+{% for content in contents %}
+{{ content }}
+{% endfor %}
+
+\section{ {{- _("Bibliography") -}} }
+{{ bibliography }}
+
+\section{ {{- _("Conclusion") -}} }
+{{ conclusion }}
+
+\end{document}

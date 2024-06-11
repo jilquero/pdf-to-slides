@@ -15,6 +15,8 @@ typer = "^0.12.3"
 markdown-to-json = "^2.1.1"
 spacy = "^3.7.5"
 pytextrank = "^3.3.0"
+jinja2 = "^3.1.4"
+babel = "^2.15.0"
 
 
 [build-system]

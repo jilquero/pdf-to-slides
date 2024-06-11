@@ -1,0 +1,7 @@
+{%- set subsection = "{" ~ subsection ~ "}" %}
+\subsection{{subsection}}
+\begin{frame}
+  {%- set frame_title = "{" ~ frame_title ~ "}" %}
+  \frametitle{{ frame_title }}
+  {{ content }}
+\end{frame}
