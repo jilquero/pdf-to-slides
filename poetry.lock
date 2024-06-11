@@ -396,6 +396,17 @@ rtd = ["jupyter_sphinx", "mdit-py-plugins", "myst-parser", "pyyaml", "sphinx", "
 testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
 
 [[package]]
+name = "markdown-to-json"
+version = "2.1.1"
+description = "Markdown to dict and json deserializer"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "markdown_to_json-2.1.1-py3-none-any.whl", hash = "sha256:c73b8a3ac7fbde65463dbaeba8bb925d1d54377cbb01a064cd65e1f3e394bd62"},
+    {file = "markdown_to_json-2.1.1.tar.gz", hash = "sha256:27642c42acd9130d1449f791f57fd0c4bbf58c7a76cfb5af6d42010ca97b1107"},
+]
+
+[[package]]
 name = "marker-pdf"
 version = "0.2.13"
 description = "Convert PDF to markdown with high speed and accuracy."
@@ -1983,4 +1994,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "8f598e7ce8e9a28763c77a17f00dadc3c073af21bcdadd6ff072bc5cf9ff81f4"
+content-hash = "4b5f6bc661753962180c8dcffdd6bdd0f87449c0092ec8c28525e855aa7a2fee"
