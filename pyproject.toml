@@ -13,6 +13,8 @@ python = "^3.12"
 marker-pdf = "^0.2.13"
 typer = "^0.12.3"
 markdown-to-json = "^2.1.1"
+spacy = "^3.7.5"
+pytextrank = "^3.3.0"
 
 
 [build-system]

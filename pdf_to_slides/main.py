@@ -1,5 +1,8 @@
 import typer
 import tempfile
+import spacy
+import en_core_web_sm  # noqa: F401
+import pytextrank  # noqa: F401
 
 from typing import Optional
 from typing_extensions import Annotated
@@ -71,3 +74,18 @@ def pdf_to_json(
     with tempfile.TemporaryDirectory() as tempdir:
         path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
         markdown_to_json(f"{path}/{path.split("/")[-1]}.md")
+
+
+@app.command()
+def summarize():
+    nlp = spacy.load("en_core_web_sm")
+    nlp.add_pipe("textrank")
+
+    example_text = ""
+
+    print('Original Document Size: ', len(example_text))
+    doc = nlp(example_text)
+
+    for sent in doc._.textrank.summary():
+        print("Summary: ", sent)
+        print('Summary Length:', len(sent))
