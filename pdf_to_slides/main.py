@@ -1,6 +1,8 @@
 import typer
 import tempfile
 import spacy
+from collections import Counter
+from heapq import nlargest
 import en_core_web_sm  # noqa: F401
 import pytextrank  # noqa: F401
 
@@ -89,3 +91,38 @@ def summarize():
     for sent in doc._.textrank.summary():
         print("Summary: ", sent)
         print('Summary Length:', len(sent))
+
+
+@app.command()
+def streszczenie():
+    # Wczytanie modelu językowego
+    nlp = spacy.load('en_core_web_sm')
+
+    # Odczytanie pliku Markdown
+    with open('./output/list_motywacyjny_ŁukaszSendecki/list_motywacyjny_ŁukaszSendecki.md', 'r', encoding='utf-8') as file:
+        markdown_content = file.read()
+
+    # Przetwarzanie tekstu za pomocą spaCy
+    doc = nlp(markdown_content)
+
+    # Tokenizacja i filtrowanie
+    words = [token.text for token in doc if not token.is_stop and not token.is_punct]
+    word_freq = Counter(words)
+
+    # Ważność zdań
+    sentence_scores = {}
+    for sent in doc.sents:
+        for word in sent:
+            if word.text in word_freq:
+                if sent not in sentence_scores:
+                    sentence_scores[sent] = word_freq[word.text]
+                else:
+                    sentence_scores[sent] += word_freq[word.text]
+
+    # Wybór najważniejszych zdań
+    summary_length = 3 # Liczba zdań w streszczeniu
+    summary_sentences = nlargest(summary_length, sentence_scores, key=sentence_scores.get)
+
+    # Stworzenie streszczenia
+    summary = ' '.join([sent.text for sent in summary_sentences])
+    print(summary)
