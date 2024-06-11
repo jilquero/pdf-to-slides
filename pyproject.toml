@@ -16,6 +16,7 @@ markdown-to-json = "^2.1.1"
 spacy = "^3.7.5"
 pytextrank = "^3.3.0"
 pypdf2 = "^3.0.1"
+mistune = "^3.0.2"
 
 
 [build-system]

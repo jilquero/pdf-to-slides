@@ -10,11 +10,10 @@ import PyPDF2
 import os
 from typing import Optional
 from typing_extensions import Annotated
-from .converters import pdf_to_markdown
-from .converters import markdown_to_json
+from .converters import pdf_to_markdown, markdown_to_json, markdown_to_latex
+from .renderer import SlideRenderer
 
 app = typer.Typer()
-
 
 @app.callback()
 def callback():
@@ -22,8 +21,6 @@ def callback():
     Pdf and markdown to slides converter
     """
 
-# example cli 
-# pts merge ./input/bariery.pdf ./input/Pyt.pdf ./output/merged_output.pdf 
 @app.command()
 def merge(
     pdf_files: Annotated[list[str], typer.Argument(help="List of PDF files to merge")],
@@ -99,7 +96,7 @@ def pdf_to_json(
     langs = langs.split(",") if langs else None
     with tempfile.TemporaryDirectory() as tempdir:
         path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
-        markdown_to_json(f"{path}/{path.split("/")[-1]}.md")
+        markdown_to_json(f"{path}/{path.split('/')[-1]}.md")
 
 
 @app.command()
@@ -127,7 +124,7 @@ def streszczenie():
     with open('./output/list_motywacyjny_ŁukaszSendecki/list_motywacyjny_ŁukaszSendecki.md', 'r', encoding='utf-8') as file:
         markdown_content = file.read()
 
-    example="""Adolf Hitler  (ur. 20 kwietnia 1889 w Braunau am Inn, zm. 30 kwietnia 1945 w Berlinie) – niemiecki polityk pochodzenia austriackiego, kanclerz Rzeszy od 30 stycznia 1933, Wódz i kanclerz Rzeszy (niem. Der Führer und Reichskanzler) od 2 sierpnia 1934 do śmierci; twórca i dyktator III Rzeszy, przywódca Narodowosocjalistycznej Niemieckiej Partii Robotników (NSDAP), ideolog narodowego socjalizmu; zbrodniarz wojenny, odpowiedzialny za zbrodnie przeciw ludzkości. Uznawany za osobiście odpowiedzialnego za politykę rasową III Rzeszy i śmierć milionów ludzi zabitych podczas jego rządów – w tym – za Holocaust i Porajmos.Urodził się na obszarze ówczesnych Austro-Węgier i wychował się w pobliżu Linzu. W 1913 przeniósł się do Niemiec. W czasie I wojny światowej walczył na froncie zachodnim. W 1919 wstąpił do Niemieckiej Partii Robotników (DAP). W 1923 usiłował przejąć władzę w wyniku nieudanego zamachu stanu w Monachium i został pozbawiony wolności na pięć lat. Tam stworzył pierwszy tom Mein Kampf (Moja walka). W 1924 z pomocą charyzmatycznych przemówień i nazistowskiej propagandy atakował traktat wersalski oraz promował pangermanizm, antysemityzm i antykomunizm. Dzięki temu zyskał powszechne poparcie.W listopadzie 1932 roku partia nazistowska miała najwięcej miejsc w niemieckim Reichstagu, ale nie miała większości. W rezultacie żadna partia nie była w stanie utworzyć większości parlamentarnej popierającej kandydata na kanclerza. Były kanclerz Franz von Papen i inni konserwatywni przywódcy przekonali prezydenta Paula von Hindenburga, by 30 stycznia 1933 mianował Hitlera na stanowisko kanclerza. Wkrótce potem rozpoczął się proces przekształcania Republiki Weimarskiej w III Rzeszę. Dążył do wyeliminowania Żydów z Niemiec i ustanowienia nowego ładu, aby przeciwdziałać temu, co uważał za niesprawiedliwość międzynarodowego porządku zdominowanego przez Wielką Brytanię i Francję po I wojnie światowej. Pierwsze sześć lat jego władzy zaowocowało szybkim ożywieniem gospodarczym po Wielkim kryzysie, zniesieniem ograniczeń nałożonych na Niemcy i aneksją terytoriów zamieszkanych przez miliony Niemców.Poszukiwał Lebensraum (dosł. „przestrzeni życiowej”) dla narodu niemieckiego w Europie Wschodniej. Był ściśle zaangażowany w operacje wojskowe podczas wojny. Prowadzona pod jego przywództwem agresywna polityka zagraniczna oraz atak na Polskę 1 września 1939 roku doprowadziły do rozpoczęcia przez Niemcy II wojny światowej, w wyniku której zginęło ok 50 milionów ludzi. W czerwcu 1941 roku zarządził inwazję na Związek Radziecki. Do końca 1941 roku siły niemieckie i państwa Osi zajęły większość Europy i Afryki Północnej. Po 1941 roku sytuacja ulegała odwróceniu, a w 1945 wojska alianckie pokonały wojska niemieckie. 29 kwietnia 1945 roku poślubił swoją wieloletnią kochankę Evę Braun w bunkrze Führera w Berlinie. Niecałe dwa dni później para popełniła samobójstwo, aby uniknąć schwytania przez sowiecką Armię Czerwoną. Ich zwłoki zostały spalone."""
+    example = """"""
 
     # Przetwarzanie tekstu za pomocą spaCy
     doc = nlp(markdown_content) #markdown_content
@@ -153,3 +150,19 @@ def streszczenie():
     # Stworzenie streszczenia
     summary = ' '.join([sent.text for sent in summary_sentences])
     print(summary)
+
+# TODO:
+# there is no end{frame} after the last frame in document
+# there are some "\\" in places where shouldn't be
+# there is a problem with images which are not yet uploaded 
+
+@app.command()
+def convert_md_to_tex(
+    md_file: str = typer.Argument(..., help="Path to the Markdown file to convert"),
+    output_file: str = typer.Argument(..., help="Output LaTeX file name")
+):
+    """
+    Convert a Markdown file to a LaTeX presentation.
+    """
+    markdown_to_latex.markdown_to_latex(md_file, output_file)
+    typer.echo(f"Converted {md_file} to {output_file}")
