@@ -1,16 +1,18 @@
+import os
+import sys
 import typer
 import tempfile
-import spacy
-import inspect
-import en_core_web_sm  # noqa: F401
-import pytextrank  # noqa: F401
 
+from rich import print
+from pathlib import Path
 from typing import Optional
 from typing_extensions import Annotated
+from contextlib import redirect_stdout
 
-from .converters import data_to_latex
-from .converters import pdf_to_markdown
-from .converters import markdown_to_json
+from .services import data_to_latex
+from .services import pdf_to_markdown
+from .services import markdown_to_json
+from .services import summarize_text
 
 app = typer.Typer()
 
@@ -24,8 +26,8 @@ def callback():
 
 @app.command()
 def md(
-    filename: Annotated[str, typer.Argument(help="PDF file to parse")],
-    output: Annotated[str, typer.Argument(help="Output base folder path")] = "output",
+    filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
+    output: Annotated[Path, typer.Argument(help="Output base folder path")] = "output",
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,
@@ -42,21 +44,26 @@ def md(
     """
     Convert pdf to markdown
     """
-    langs = langs.split(",") if langs else None
-    pdf_to_markdown(filename, output, langs, batch_multiplier, start_page, max_pages)
+    with redirect_stdout(os.devnull):
+        markdown = pdf_to_markdown(filename, output, langs, batch_multiplier, start_page, max_pages)
+
+    print(markdown)
 
 
 @app.command()
-def json(filename: Annotated[str, typer.Argument(help="Markdown file to parse")]):
+def json(filename: Annotated[Path, typer.Argument(help="Markdown file to parse")]):
     """
     Convert markdown to json
     """
-    markdown_to_json(filename)
+    with redirect_stdout(os.devnull):
+        json = markdown_to_json(filename)
+
+    print(json)
 
 
 @app.command()
 def pdf_to_json(
-    filename: Annotated[str, typer.Argument(help="Markdown file to parse")],
+    filename: Annotated[Path, typer.Argument(help="Markdown file to parse")],
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,
@@ -73,25 +80,19 @@ def pdf_to_json(
     """
     Convert pdf to json
     """
-    langs = langs.split(",") if langs else None
-    with tempfile.TemporaryDirectory() as tempdir:
+    with tempfile.TemporaryDirectory() as tempdir, redirect_stdout(sys.stderr):
         path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
-        markdown_to_json(f"{path}/{path.split("/")[-1]}.md")
+        json = markdown_to_json(f"{path}/{path.split("/")[-1]}.md")
+
+    print(json)
 
 
 @app.command()
-def summarize():
-    nlp = spacy.load("en_core_web_sm")
-    nlp.add_pipe("textrank")
+def summarize(text: Annotated[str, typer.Argument(help="Text to summarize")],):
+    with redirect_stdout(os.devnull):
+        summary = summarize_text(text)
 
-    example_text = ""
-
-    print('Original Document Size: ', len(example_text))
-    doc = nlp(example_text)
-
-    for sent in doc._.textrank.summary():
-        print("Summary: ", sent)
-        print('Summary Length:', len(sent))
+    print(summary)
 
 
 @app.command()
@@ -99,75 +100,7 @@ def template():
     """
     Convert data to latex
     """
-    title = "Hello, World!"
-    authors = [
-        {
-            "name": "Jan Kowalski",
-            "email": "j.kowalski@pl.edu.pl",
-            "university": "1"
-        },
-        {
-            "name": "Janina Nowak",
-            "email": "j.nowak@pl.edu.pl",
-            "university": "2"
-        },
-    ]
-    universities = [
-        {
-            "name": "University of Technology, Warszawska 24, PL-31-155 Cracow, Poland",
-            "id": "1",
-        },
-        {
-            "name": "Catholic University of Lublin, Raclawickie 14, PL-20-950 Lublin, Poland",
-            "id": "2",
-        },
-    ]
-    city = "Lublin"
+    with redirect_stdout(os.devnull):
+        latex = data_to_latex()
 
-    contents = [
-        {
-            "title": "Text title 1",
-            "content": inspect.cleandoc("""Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor,
-            dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue,
-            euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper.
-            Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor.
-            Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales."""),
-        },
-        {
-            "title": "Text title 2",
-            "content": inspect.cleandoc("""Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor,
-            dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue,
-            euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper.
-            Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor.
-            Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales."""),
-        },
-    ]
-
-    citations = [
-        {
-            "ref": "art1_Kowal2000",
-            "text": "Kowal, P.: Fuzzy Controller for Mechanical Systems. IEEE Transactions on Fuzzy Systems \textbf{8}, 645--652 (2000)",
-        },
-        {
-            "ref": "book1_Silverman1986",
-            "text": "Silverman, B.W.: Density Estimation for Statistcs and Data Analysis, Chapman and Hall, London (1986)",
-        },
-        {
-            "ref": "book2_Wandl1995",
-            "text": "Wand, M.P., Jones, M.C.: Kernal Smoothing, Chapman and Hall, London (1995)",
-        },
-        {
-            "ref": "book3_Berger1980",
-            "text": "Berger, J.O.: Statistical Decision Theroy, Springer-Verlag, New York (1980)",
-        },
-    ]
-
-    latex = data_to_latex(
-        title=title,
-        contents=contents,
-        authors=authors,
-        universities=universities,
-        city=city,
-        citations=citations,
-    )
     print(latex)

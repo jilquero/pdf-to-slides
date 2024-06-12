@@ -16,8 +16,6 @@ def pdf_to_markdown(
     """
     Pdf and markdown to slides converter
     """
-    print("Loading models")
-
     model_lst = load_all_models()
     full_text, images, out_meta = convert_single_pdf(
         filename,
@@ -31,5 +29,4 @@ def pdf_to_markdown(
     filename = os.path.basename(filename)
     path = save_markdown(output, filename, full_text, images, out_meta)
 
-    print(f"Saved markdown to the {path} folder")
     return path
