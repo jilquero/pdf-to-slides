@@ -11,6 +11,11 @@ from .converters import markdown_to_json
 from jinja2 import Environment, PackageLoader, select_autoescape
 from babel.support import Translations
 
+import tkinter as tk
+from tkinter import filedialog
+import os
+import json
+
 env = Environment(
     loader=PackageLoader("pdf_to_slides", "../templates"),
     extensions=["jinja2.ext.i18n"],
@@ -61,7 +66,7 @@ def md(
 
 
 @app.command()
-def json(filename: Annotated[str, typer.Argument(help="Markdown file to parse")]):
+def md_2_json(filename: Annotated[str, typer.Argument(help="Markdown file to parse")]):
     """
     Convert markdown to json
     """
@@ -157,3 +162,38 @@ def template():
                           contents=[text_render, text_render2],
                           bibliography=bibliography_render,
                           conclusion=conclusion_render))
+
+@app.command()
+def select_files():
+    """
+    Select multiple files and save their details in a JSON file.
+    """
+    # Create a Tkinter root widget
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+
+    # Open a file dialog to select multiple files
+    file_paths = filedialog.askopenfilenames(title="Select files")
+    print("Selected file paths:", file_paths)
+
+
+    if not file_paths:
+        print("No files selected")
+        return
+
+    # Create input directory if it doesn't exist
+    input_dir = "input"
+    os.makedirs(input_dir, exist_ok=True)
+
+    # Prepare the file details to be saved in JSON
+    file_details = [{"name": os.path.basename(path), "relative_path": os.path.relpath(path, input_dir)} for path in file_paths]
+
+    print("File details:", file_details)
+
+
+    # Save the file details in a JSON file
+    json_file_path = os.path.join(input_dir, "file_details.json")
+    with open(json_file_path, "w") as json_file:
+        json.dump(file_details, json_file, indent=4)
+
+    print(f"Selected files saved in {json_file_path}")
