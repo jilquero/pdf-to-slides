@@ -30,6 +30,22 @@ astroid = ["astroid (>=1,<2)", "astroid (>=2,<4)"]
 test = ["astroid (>=1,<2)", "astroid (>=2,<4)", "pytest"]
 
 [[package]]
+name = "bert-extractive-summarizer"
+version = "0.10.1"
+description = "Extractive Text Summarization with BERT"
+optional = false
+python-versions = "*"
+files = [
+    {file = "bert-extractive-summarizer-0.10.1.tar.gz", hash = "sha256:b316e0540b71df2c2120de2d5ccb97cdbd621b30fb0f4c4d93343a22b9365f3d"},
+    {file = "bert_extractive_summarizer-0.10.1-py3-none-any.whl", hash = "sha256:46897531f76a18943542e2bec58d728625bb70e09995891f717e005bd1b26b87"},
+]
+
+[package.dependencies]
+scikit-learn = "*"
+spacy = "*"
+transformers = "*"
+
+[[package]]
 name = "blis"
 version = "0.7.11"
 description = "The Blis BLAS-like linear algebra library, as a self-contained C-extension."
@@ -1292,6 +1308,31 @@ developer = ["changelist (==0.5)", "mypy (>=1.1)", "pre-commit (>=3.2)", "rtoml"
 doc = ["myst-nb (>=1.0)", "numpydoc (>=1.7)", "pillow (>=9.4)", "pydata-sphinx-theme (>=0.14)", "sphinx (>=7)", "sphinx-gallery (>=0.14)", "texext (>=0.6.7)"]
 extra = ["lxml (>=4.6)", "pydot (>=2.0)", "pygraphviz (>=1.12)", "sympy (>=1.10)"]
 test = ["pytest (>=7.2)", "pytest-cov (>=4.0)"]
+
+[[package]]
+name = "nltk"
+version = "3.8.1"
+description = "Natural Language Toolkit"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "nltk-3.8.1-py3-none-any.whl", hash = "sha256:fd5c9109f976fa86bcadba8f91e47f5e9293bd034474752e92a520f81c93dda5"},
+    {file = "nltk-3.8.1.zip", hash = "sha256:1834da3d0682cba4f2cede2f9aad6b0fafb6461ba451db0efb6f9c39798d64d3"},
+]
+
+[package.dependencies]
+click = "*"
+joblib = "*"
+regex = ">=2021.8.3"
+tqdm = "*"
+
+[package.extras]
+all = ["matplotlib", "numpy", "pyparsing", "python-crfsuite", "requests", "scikit-learn", "scipy", "twython"]
+corenlp = ["requests"]
+machine-learning = ["numpy", "python-crfsuite", "scikit-learn", "scipy"]
+plot = ["matplotlib"]
+tgrep = ["pyparsing"]
+twitter = ["twython"]
 
 [[package]]
 name = "numpy"
@@ -3321,4 +3362,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e617a54a3314d57f64c794ca8f86555f19d1807a16d76df50db85201c2b5c15c"
+content-hash = "1cf4c004c4c4ab41edc6b477fd834e5e58e3745841a379f4efccfcec1e438452"

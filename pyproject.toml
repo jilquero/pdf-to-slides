@@ -15,6 +15,11 @@ typer = "^0.12.3"
 markdown-to-json = "^2.1.1"
 spacy = "^3.7.5"
 pytextrank = "^3.3.0"
+nltk = "^3.8.1"
+bert-extractive-summarizer = "^0.10.1"
+transformers = "^4.41.2"
+numpy = "^1.26.4"
+networkx = "^3.3"
 
 
 [build-system]
