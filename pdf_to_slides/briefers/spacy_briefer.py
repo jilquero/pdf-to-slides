@@ -9,8 +9,13 @@ def spacy_accurate_brief_en(text: str=None, num_sentences: int = 3) -> str:
         return ""
 
     # Load the spaCy model and add pytextrank to the pipeline
-    nlp = spacy.load("en_core_web_trf")
+    nlp = spacy.load("en_core_web_trf",disable=['ner'])#en_core_web_trf
+
+    #nlp.remove_pipe('ner') 
+
     nlp.add_pipe("textrank")
+
+    print(nlp.pipe_names)
 
     # Process the text
     doc = nlp(text)
