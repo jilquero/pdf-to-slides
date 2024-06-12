@@ -14,6 +14,8 @@ import nltk
 from .briefers import bert_summarizer
 from .briefers import bart_summarize
 from .briefers import textrank_summarize
+from .briefers import spacy_tutorial
+from .briefers import token_scorer
 
 app = typer.Typer()
 
@@ -103,7 +105,33 @@ def summarize():
 
 
 @app.command()
-def spacy_acc():
+def token_scorer():
+    # Example usage with an English text
+    example_text_en = """The purpose of the exercise is to present advanced classification methods, specifically focusing on various strategies and techniques using the scikit-learn library in Python. The following is a synthetic description of the various steps in connection with the implementation of Laboraotrium 1:
+     1. loading and examining the MNIST dataset, a classic dataset in machine learning that contains images of handwritten digits. The typical steps found in machine learning and artificial intelligence projects are presented: loading the data, visualization, preprocessing, and splitting it into training and test sets.
+     2. creation of binary classifier models, starting with the Stochastic Gradient Descent (SGD) classifier. Various performance measures, including accuracy, confusion matrix, precision, sensitivity and ROC curve, were discussed and demonstrated to evaluate the classifier's performance. Multi-class learning using support vector machines (SVMs) and OneVsRest strategies are then presented.
+     3. In the second part, we delve into more complicated scenarios, such as multi-label and multi-vendor classification. For example, we use the K-Neighbors classifier to handle multiple labels and the Random Forest classifier for multi-label classification, tackling more advanced scenarios. Practical code snippets are presented for creating and interpreting confusion matrices, precision-recall curves and ROC curves, providing an understanding of various evaluation metrics.
+     4. The manual emphasizes data visualization with practical examples."""
+
+    summary = token_scorer(example_text_en)
+    print(summary)
+
+@app.command()
+def sent():
+    # Example usage with an English text
+    example_text_en = """The purpose of the exercise is to present advanced classification methods, specifically focusing on various strategies and techniques using the scikit-learn library in Python. The following is a synthetic description of the various steps in connection with the implementation of Laboraotrium 1:
+     1. loading and examining the MNIST dataset, a classic dataset in machine learning that contains images of handwritten digits. The typical steps found in machine learning and artificial intelligence projects are presented: loading the data, visualization, preprocessing, and splitting it into training and test sets.
+     2. creation of binary classifier models, starting with the Stochastic Gradient Descent (SGD) classifier. Various performance measures, including accuracy, confusion matrix, precision, sensitivity and ROC curve, were discussed and demonstrated to evaluate the classifier's performance. Multi-class learning using support vector machines (SVMs) and OneVsRest strategies are then presented.
+     3. In the second part, we delve into more complicated scenarios, such as multi-label and multi-vendor classification. For example, we use the K-Neighbors classifier to handle multiple labels and the Random Forest classifier for multi-label classification, tackling more advanced scenarios. Practical code snippets are presented for creating and interpreting confusion matrices, precision-recall curves and ROC curves, providing an understanding of various evaluation metrics.
+     4. The manual emphasizes data visualization with practical examples."""
+
+    summary = ultimate_sentence_scorer(example_text_en)
+    print(summary)
+
+
+
+@app.command()
+def ultimate_brief():
     # Example usage with an English text
     example_text_en = """The purpose of the exercise is to present advanced classification methods, specifically focusing on various strategies and techniques using the scikit-learn library in Python. The following is a synthetic description of the various steps in connection with the implementation of Laboraotrium 1:
      1. loading and examining the MNIST dataset, a classic dataset in machine learning that contains images of handwritten digits. The typical steps found in machine learning and artificial intelligence projects are presented: loading the data, visualization, preprocessing, and splitting it into training and test sets.
@@ -114,6 +142,17 @@ def spacy_acc():
     summary = spacy_accurate_brief_en(example_text_en, num_sentences=3)
     print(summary)
 
+@app.command()
+def spacy_tutorial():
+    # ESpacy configured accordingly to the tutorial
+    example_text_en = """The purpose of the exercise is to present advanced classification methods, specifically focusing on various strategies and techniques using the scikit-learn library in Python. The following is a synthetic description of the various steps in connection with the implementation of Laboraotrium 1:
+     1. loading and examining the MNIST dataset, a classic dataset in machine learning that contains images of handwritten digits. The typical steps found in machine learning and artificial intelligence projects are presented: loading the data, visualization, preprocessing, and splitting it into training and test sets.
+     2. creation of binary classifier models, starting with the Stochastic Gradient Descent (SGD) classifier. Various performance measures, including accuracy, confusion matrix, precision, sensitivity and ROC curve, were discussed and demonstrated to evaluate the classifier's performance. Multi-class learning using support vector machines (SVMs) and OneVsRest strategies are then presented.
+     3. In the second part, we delve into more complicated scenarios, such as multi-label and multi-vendor classification. For example, we use the K-Neighbors classifier to handle multiple labels and the Random Forest classifier for multi-label classification, tackling more advanced scenarios. Practical code snippets are presented for creating and interpreting confusion matrices, precision-recall curves and ROC curves, providing an understanding of various evaluation metrics.
+     4. The manual emphasizes data visualization with practical examples."""
+
+    summary = spacy_tutorial(example_text_en)
+    print(summary)
 
 @app.command()
 def nltk_sum():#[not too good] basic summarizer using sentence tokenization and scoring sentences based on word frequencies
