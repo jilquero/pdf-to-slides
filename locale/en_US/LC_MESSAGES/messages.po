@@ -34,4 +34,4 @@ msgid "Agenda"
 msgstr "Agenda"
 
 msgid "Thank you for your attention!"
-msgstr "Thank you for your attention!\\\\[1ex] For any questions or further discussion, feel free to reach out:\\\\[2ex]"
+msgstr "Thank you for your attention!\\\\[1ex] For any questions or further discussion, feel free to reach out\\\\[2ex]"

@@ -1,10 +1,10 @@
 \subsection{ {{- _("Conclusion") -}} }
 \begin{frame}
-\frametitle{}
+  \frametitle{ {{- _("Conclusion") -}} }
   \centering
   \vfill
   {{ _("Thank you for your attention!") }}
-  {% for author in authors %}
+  {% for author in authors if author.name and author.email %}
   \begin{minipage}{0.45\textwidth}
     \textbf{ {{- author.name -}} }\\
     \href{mailto:{{- author.email -}}}{ {{- author.email -}} }

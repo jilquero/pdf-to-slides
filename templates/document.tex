@@ -16,8 +16,10 @@
 {{ content }}
 {% endfor %}
 
+{% if bibliography is not none %}
 \section{ {{- _("Bibliography") -}} }
 {{ bibliography }}
+{% endif %}
 
 \section{ {{- _("Conclusion") -}} }
 {{ conclusion }}

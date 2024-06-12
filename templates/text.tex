@@ -1,7 +1,5 @@
-{%- set subsection = "{" ~ subsection ~ "}" %}
-\subsection{{subsection}}
+\subsection{ {{- title -}} }
 \begin{frame}
-  {%- set frame_title = "{" ~ frame_title ~ "}" %}
-  \frametitle{{ frame_title }}
+  \frametitle{ {{- title -}} }
   {{ content }}
 \end{frame}
