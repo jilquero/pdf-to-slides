@@ -15,6 +15,7 @@ from .services import pdf_to_markdown
 from .services import markdown_to_dictionary
 from .services import summarize_text
 from .services import pdf_to_slides
+from .services import process_data
 from .converters import json_to_data as json_to_data_converter
 
 app = typer.Typer()
@@ -119,6 +120,7 @@ def json_to_data(
     with redirect_stdout(os.devnull):
         dictionary = json_module.load(open(filename, "r"))
         data = json_to_data_converter(dictionary)
+        data = process_data(data)
 
     pprint(data)
 

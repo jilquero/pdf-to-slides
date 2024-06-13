@@ -9,7 +9,7 @@ from ..converters import data_to_latex as data_to_latex_converter
 
 from . import pdf_to_markdown as pdf_to_markdown_service
 from . import markdown_to_dictionary as markdown_to_dictionary_service
-from . import summarize_text
+from . import process_data
 
 
 def pdf_to_slides(
@@ -27,7 +27,7 @@ def pdf_to_slides(
         path = pdf_to_markdown_service(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
         dictionary = markdown_to_dictionary_service(f"{path}/{path.split("/")[-1]}.md")
         data = json_to_data_converter(dictionary)
-        data["contents"] = list(map(lambda x: x | {"content": summarize_text(x["content"])}, data.get("contents", [])))
+        data = process_data(data)
         latex = data_to_latex_converter(data["title"], data["contents"])
 
     return latex
