@@ -83,24 +83,12 @@ def pdf_to_json(
 
 
 @app.command()
-def summarize():
-    nlp = spacy.load("en_core_web_sm")
-    nlp.add_pipe("textrank")
-
-    print('Original Document Size: ', len(example_text_en))
-    doc = nlp(example_text_en)
-
-    for sent in doc._.textrank.summary():
-        print("Summary: ", sent)
-        print('Summary Length:', len(sent))
-
-@app.command()
-def google():
+def google():   # --- 2 min 10 sec --- readibility 3/3
     print("Summary: google")
     print(summarize_google(example_text_en))
 
 @app.command()
-def t5():
+def t5():   # --- 3 min 20 sec --- readibility 2.5/3
     print("Summary: t5")
     print(summarize_t5(example_text_en))
 
