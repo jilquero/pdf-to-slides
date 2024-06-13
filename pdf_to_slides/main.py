@@ -86,10 +86,11 @@ def pdf_to_json(
     """
     with tempfile.TemporaryDirectory() as tempdir, redirect_stdout(sys.stderr):
         path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
-        dict = markdown_to_dictionary(f"{path}/{path.split("/")[-1]}.md")
-
-    print(json_module.dump(json_module.load(dict), indent=2))
-
+        markdown_file = os.path.join(path, f"{os.path.basename(path)}.md")
+        dict_data = markdown_to_dictionary(markdown_file)
+    
+    json_output = json_module.dumps(dict_data, indent=2)
+    print(json_output)
 
 @app.command()
 def summarize(text: Annotated[str, typer.Argument(help="Text to summarize")],):
@@ -97,6 +98,26 @@ def summarize(text: Annotated[str, typer.Argument(help="Text to summarize")],):
         summary = summarize_text(text)
 
     print(summary)
+
+@app.command()
+def summarize_json(input_file: Annotated[Path, typer.Argument(help="JSON file to summarize")], output_file: Annotated[Path, typer.Argument(help="Output JSON file path")]):
+    """
+    Summarize contents of a JSON file and output to another JSON file.
+    """
+    with open(input_file, 'r', encoding='utf-8') as f:
+        data = json_module.load(f)
+
+    summarized_data = {}
+
+    for main_title, sub_sections in data.items():
+        summarized_data[main_title] = {}
+        for sub_title, content in sub_sections.items():
+            summarized_data[main_title][sub_title] = summarize_text(content)
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json_module.dump(summarized_data, f, indent=2)
+
+    print(f"Summarized JSON written to {output_file}")
 
 
 @app.command()

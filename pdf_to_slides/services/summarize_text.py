@@ -7,7 +7,7 @@ def summarize_text(text: str) -> str:
     """
     Summarize a PDF file
     """
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_md",disable=['ner'])#en_core_web_trf
     nlp.add_pipe("textrank")
 
     doc = nlp(text)
