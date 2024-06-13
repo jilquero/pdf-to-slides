@@ -4,6 +4,7 @@ import typer
 import tempfile
 import json as json_module
 
+from pprint import pprint
 from pathlib import Path
 from typing import Optional
 from typing_extensions import Annotated
@@ -14,6 +15,7 @@ from .services import pdf_to_markdown
 from .services import markdown_to_dictionary
 from .services import summarize_text
 from .services import pdf_to_slides
+from .converters import json_to_data as json_to_data_converter
 
 app = typer.Typer()
 
@@ -105,6 +107,20 @@ def template():
         latex = data_to_latex()
 
     print(latex)
+
+
+@app.command()
+def json_to_data(
+    filename: Annotated[Path, typer.Argument(help="JSON file to parse")],
+):
+    """
+    Convert json to latex
+    """
+    with redirect_stdout(os.devnull):
+        dictionary = json_module.load(open(filename, "r"))
+        data = json_to_data_converter(dictionary)
+
+    pprint(data)
 
 
 @app.command()
