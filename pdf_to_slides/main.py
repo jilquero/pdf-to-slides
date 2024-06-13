@@ -10,7 +10,6 @@ from typing import Optional
 from typing_extensions import Annotated
 from contextlib import redirect_stdout
 
-from .services import data_to_latex
 from .services import pdf_to_markdown
 from .services import markdown_to_dictionary
 from .services import summarize_text
@@ -129,17 +128,6 @@ def summarize_json(
 
 
 @app.command()
-def template():
-    """
-    Convert data to latex
-    """
-    with redirect_stdout(os.devnull):
-        latex = data_to_latex()
-
-    print(latex)
-
-
-@app.command()
 def json_to_data(
     filename: Annotated[Path, typer.Argument(help="JSON file to parse")],
 ):
@@ -157,6 +145,7 @@ def json_to_data(
 @app.command()
 def json_to_latex(
     filename: Annotated[Path, typer.Argument(help="JSON file to parse")],
+    output_file: Annotated[Path, typer.Argument(help="Output JSON file path")],
 ):
     """
     Convert json to latex
@@ -166,6 +155,9 @@ def json_to_latex(
         data = json_to_data_converter(dictionary)
         data = process_data(data)
         latex = data_to_latex_converter(data["title"], data["contents"])
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(latex)
 
     print(latex)
 
