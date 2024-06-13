@@ -165,7 +165,9 @@ def json_to_latex(
 @app.command()
 def convert(
     filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
-    output: Annotated[Path, typer.Argument(help="Output base folder path")] = "output",
+    output: Annotated[
+        Path, typer.Argument(help="Output base folder path")
+    ] = "output.tex",
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,

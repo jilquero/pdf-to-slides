@@ -1,5 +1,5 @@
 import spacy
-import en_core_web_sm  # noqa: F401
+import en_core_web_md  # noqa: F401
 import pytextrank  # noqa: F401
 
 
