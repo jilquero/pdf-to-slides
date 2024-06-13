@@ -5,7 +5,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 
 
 
-def nltk_accurate_brief_en(text: str=None, num_sentences: int = 3) -> str:
+def nltk_summarizer(text: str=None, num_sentences: int = 3) -> str: #this was named : nltk_accurate_brief_en
     if text is None:
         return ""
 

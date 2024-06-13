@@ -28,7 +28,7 @@ def sentence_similarity(sent1, sent2, stop_words=None):
         vector2[all_words.index(word)] += 1
     return 1 - cosine_distance(vector1, vector2)
 
-def textrank_summarize(text, num_sentences=3):
+def textrank_summarizer(text, num_sentences=3):
     sentences = sent_tokenize(text)
     stop_words = set(stopwords.words('english'))
     sentence_similarity_matrix = build_similarity_matrix(sentences, stop_words)

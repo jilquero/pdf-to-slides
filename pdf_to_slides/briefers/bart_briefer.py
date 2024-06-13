@@ -1,6 +1,6 @@
 from transformers import BartTokenizer, BartForConditionalGeneration
 
-def bart_summarize(text: str = None, max_length: int = 100, min_length: int = 50, length_penalty: float = 2.0, num_beams: int = 4) -> str:
+def bart_summarizer(text: str = None, max_length: int = 100, min_length: int = 50, length_penalty: float = 2.0, num_beams: int = 4) -> str:
     if text is None:
         return ""
 
