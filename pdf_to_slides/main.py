@@ -12,6 +12,9 @@ from .converters import markdown_to_json
 from .summarize import *
 
 
+example_text_en = """Convolutional neural network (CNN) is a regularized type of feed-forward neural network that learns feature engineering by itself via filters (or kernel) optimization. Vanishing gradients and exploding gradients, seen during backpropagation in earlier neural networks, are prevented by using regularized weights over fewer connections. For example, for each neuron in the fully-connected layer, 10,000 weights would be required for processing an image sized 100 × 100 pixels. However, applying cascaded convolution (or cross-correlation) kernels, only 25 neurons are required to process 5x5-sized tiles. Higher-layer features are extracted from wider context windows, compared to lower-layer features. CNNs are also known as shift invariant or space invariant artificial neural networks (SIANN), based on the shared-weight architecture of the convolution kernels or filters that slide along input features and provide translation-equivariant responses known as feature maps. Counter-intuitively, most convolutional neural networks are not invariant to translation, due to the downsampling operation they apply to the input. Feed-forward neural networks are usually fully connected networks, that is, each neuron in one layer is connected to all neurons in the next layer. The "full connectivity" of these networks makes them prone to overfitting data. Typical ways of regularization, or preventing overfitting, include: penalizing parameters during training (such as weight decay) or trimming connectivity (skipped connections, dropout, etc.) Robust datasets also increase the probability that CNNs will learn the generalized principles that characterize a given dataset rather than the biases of a poorly-populated set. Convolutional networks were inspired by biological processes in that the connectivity pattern between neurons resembles the organization of the animal visual cortex. Individual cortical neurons respond to stimuli only in a restricted region of the visual field known as the receptive field. The receptive fields of different neurons partially overlap such that they cover the entire visual field. CNNs use relatively little pre-processing compared to other image classification algorithms. This means that the network learns to optimize the filters (or kernels) through automated learning, whereas in traditional algorithms these filters are hand-engineered. This independence from prior knowledge and human intervention in feature extraction is a major advantage."""
+
+
 app = typer.Typer()
 
 
@@ -84,39 +87,20 @@ def summarize():
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("textrank")
 
-    example_text = "Adolf Hitler  ur. 20 kwietnia 1889 w Braunau am Inn, zm. 30 kwietnia 1945 w Berlinie)  niemiecki polityk pochodzenia austriackiego, kanclerz Rzeszy od 30 stycznia 1933, Wódz i kanclerz Rzeszy (niem. Der Führer und Reichskanzler) od 2 sierpnia 1934 do śmierci; twórca i dyktator III Rzeszy, przywódca Narodowosocjalistycznej Niemieckiej Partii Robotników (NSDAP), ideolog narodowego socjalizmu; zbrodniarz wojenny, odpowiedzialny za zbrodnie przeciw ludzkości. Uznawany za osobiście odpowiedzialnego za politykę rasową III Rzeszy i śmierć milionów ludzi zabitych podczas jego rządów  w tym  za Holocaust i Porajmos.Urodził się na obszarze ówczesnych Austro-Węgier i wychował się w pobliżu Linzu. W 1913 przeniósł się do Niemiec. W czasie I wojny światowej walczył na froncie zachodnim. W 1919 wstąpił do Niemieckiej Partii Robotników (DAP). W 1923 usiłował przejąć władzę w wyniku nieudanego zamachu stanu w Monachium i został pozbawiony wolności na pięć lat. Tam stworzył pierwszy tom Mein Kampf (Moja walka). W 1924 z pomocą charyzmatycznych przemówień i nazistowskiej propagandy atakował traktat wersalski oraz promował pangermanizm, antysemityzm i antykomunizm. Dzięki temu zyskał powszechne poparcie.W listopadzie 1932 roku partia nazistowska miała najwięcej miejsc w niemieckim Reichstagu, ale nie miała większości. W rezultacie żadna partia nie była w stanie utworzyć większości parlamentarnej popierającej kandydata na kanclerza. Były kanclerz Franz von Papen i inni konserwatywni przywódcy przekonali prezydenta Paula von Hindenburga, by 30 stycznia 1933 mianował Hitlera na stanowisko kanclerza. Wkrótce potem rozpoczął się proces przekształcania Republiki Weimarskiej w III Rzeszę. Dążył do wyeliminowania Żydów z Niemiec i ustanowienia nowego ładu, aby przeciwdziałać temu, co uważał za niesprawiedliwość międzynarodowego porządku zdominowanego przez Wielką Brytanię i Francję po I wojnie światowej. Pierwsze sześć lat jego władzy zaowocowało szybkim ożywieniem gospodarczym po Wielkim kryzysie, zniesieniem ograniczeń nałożonych na Niemcy i aneksją terytoriów zamieszkanych przez miliony Niemców.Poszukiwał Lebensraum (dosł. „przestrzeni życiowej”) dla narodu niemieckiego w Europie Wschodniej. Był ściśle zaangażowany w operacje wojskowe podczas wojny. Prowadzona pod jego przywództwem agresywna polityka zagraniczna oraz atak na Polskę 1 września 1939 roku doprowadziły do rozpoczęcia przez Niemcy II wojny światowej, w wyniku której zginęło ok. 50 milionów ludzi[1]. W czerwcu 1941 roku zarządził inwazję na Związek Radziecki. Do końca 1941 roku siły niemieckie i państwa Osi zajęły większość Europy i Afryki Północnej. Po 1941 roku sytuacja ulegała odwróceniu, a w 1945 wojska alianckie pokonały wojska niemieckie. 29 kwietnia 1945 roku poślubił swoją wieloletnią kochankę Evę Braun w bunkrze Führera w Berlinie. Niecałe dwa dni później para popełniła samobójstwo, aby uniknąć schwytania przez sowiecką Armię Czerwoną. Ich zwłoki zostały spalone."
-
-    print('Original Document Size: ', len(example_text))
-    doc = nlp(example_text)
+    print('Original Document Size: ', len(example_text_en))
+    doc = nlp(example_text_en)
 
     for sent in doc._.textrank.summary():
         print("Summary: ", sent)
         print('Summary Length:', len(sent))
 
-
-
-
 @app.command()
 def google():
-    text = """
-    The purpose of the exercise is to present advanced classification methods, specifically focusing on various strategies and techniques using the scikit-learn library in Python. The following is a synthetic description of the various steps in connection with the implementation of Lab 1:
-    1. Load and examine the MNIST dataset, a classic dataset in machine learning that contains images of handwritten digits. The typical steps found in machine learning and artificial intelligence projects are presented: data loading, visualization, preprocessing, and splitting into training and test sets.
-    2. Create models of binary classifiers, starting with the Stochastic Gradient Descent (SGD) classifier. Various performance measures, including accuracy, confusion matrix, precision, sensitivity and ROC curve, were discussed and demonstrated to evaluate the classifier's performance. Multi-class learning using support vector machines (SVMs) and OneVsRest strategies are then presented.
-    3. In the second part, we delve into more complicated scenarios, such as multi-label and multi-vendor classification. For example, we use the K-Neighbors classifier to handle multiple labels and the Random Forest classifier for multi-label classification, tackling more advanced scenarios. Practical code snippets for creating and interpreting confusion matrices, precision-recall curves and ROC curves are presented, providing an understanding of various evaluation metrics.
-    4. The manual emphasizes data visualization with practical examples.
-    """
     print("Summary: google")
-    print(summarize_google(text))
+    print(summarize_google(example_text_en))
 
 @app.command()
 def t5():
-    text = """
-    The purpose of the exercise is to present advanced classification methods, specifically focusing on various strategies and techniques using the scikit-learn library in Python. The following is a synthetic description of the various steps in connection with the implementation of Lab 1:
-    1. Load and examine the MNIST dataset, a classic dataset in machine learning that contains images of handwritten digits. The typical steps found in machine learning and artificial intelligence projects are presented: data loading, visualization, preprocessing, and splitting into training and test sets.
-    2. Create models of binary classifiers, starting with the Stochastic Gradient Descent (SGD) classifier. Various performance measures, including accuracy, confusion matrix, precision, sensitivity and ROC curve, were discussed and demonstrated to evaluate the classifier's performance. Multi-class learning using support vector machines (SVMs) and OneVsRest strategies are then presented.
-    3. In the second part, we delve into more complicated scenarios, such as multi-label and multi-vendor classification. For example, we use the K-Neighbors classifier to handle multiple labels and the Random Forest classifier for multi-label classification, tackling more advanced scenarios. Practical code snippets for creating and interpreting confusion matrices, precision-recall curves and ROC curves are presented, providing an understanding of various evaluation metrics.
-    4. The manual emphasizes data visualization with practical examples.
-    """
     print("Summary: t5")
-    print(summarize_t5(text))
+    print(summarize_t5(example_text_en))
 
