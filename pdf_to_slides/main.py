@@ -184,4 +184,7 @@ def convert(
             filename, output, langs, batch_multiplier, start_page, max_pages
         )
 
+    with open(output, "w", encoding="utf-8") as f:
+        f.write(slides)
+
     print(slides)
