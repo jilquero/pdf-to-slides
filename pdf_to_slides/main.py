@@ -165,7 +165,9 @@ def json_to_latex(
 @app.command()
 def convert(
     filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
-    output: Annotated[Path, typer.Argument(help="Output base folder path")] = "output",
+    output: Annotated[
+        Path, typer.Argument(help="Output base folder path")
+    ] = "output.tex",
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,
@@ -180,9 +182,7 @@ def convert(
     ] = None,
 ):
     with redirect_stdout(os.devnull):
-        slides = pdf_to_slides(
-            filename, output, langs, batch_multiplier, start_page, max_pages
-        )
+        slides = pdf_to_slides(filename, langs, batch_multiplier, start_page, max_pages)
 
     with open(output, "w", encoding="utf-8") as f:
         f.write(slides)
