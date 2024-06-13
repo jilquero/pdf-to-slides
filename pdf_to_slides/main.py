@@ -147,7 +147,7 @@ def json_to_data(
     Convert json to latex
     """
     with redirect_stdout(os.devnull):
-        dictionary = json_module.load(open(filename, "r"))
+        dictionary = json_module.load(open(filename, "r", encoding="utf-8"))
         data = json_to_data_converter(dictionary)
         data = process_data(data)
 
@@ -162,7 +162,7 @@ def json_to_latex(
     Convert json to latex
     """
     with redirect_stdout(os.devnull):
-        dictionary = json_module.load(open(filename, "r"))
+        dictionary = json_module.load(open(filename, "r", encoding="utf-8"))
         data = json_to_data_converter(dictionary)
         data = process_data(data)
         latex = data_to_latex_converter(data["title"], data["contents"])
