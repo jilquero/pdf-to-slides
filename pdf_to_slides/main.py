@@ -17,6 +17,7 @@ from .services import summarize_text
 from .services import pdf_to_slides
 from .services import process_data
 from .converters import json_to_data as json_to_data_converter
+from .converters import data_to_latex as data_to_latex_converter
 
 app = typer.Typer()
 
@@ -49,7 +50,9 @@ def md(
     Convert pdf to markdown
     """
     with redirect_stdout(os.devnull):
-        markdown = pdf_to_markdown(filename, output, langs, batch_multiplier, start_page, max_pages)
+        markdown = pdf_to_markdown(
+            filename, output, langs, batch_multiplier, start_page, max_pages
+        )
 
     print(markdown)
 
@@ -85,36 +88,41 @@ def pdf_to_json(
     Convert pdf to json
     """
     with tempfile.TemporaryDirectory() as tempdir, redirect_stdout(sys.stderr):
-        path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
+        path = pdf_to_markdown(
+            filename, tempdir, langs, batch_multiplier, start_page, max_pages
+        )
         markdown_file = os.path.join(path, f"{os.path.basename(path)}.md")
         dict_data = markdown_to_dictionary(markdown_file)
-    
+
     json_output = json_module.dumps(dict_data, indent=2)
     print(json_output)
 
+
 @app.command()
-def summarize(text: Annotated[str, typer.Argument(help="Text to summarize")],):
+def summarize(
+    text: Annotated[str, typer.Argument(help="Text to summarize")],
+):
     with redirect_stdout(os.devnull):
         summary = summarize_text(text)
 
     print(summary)
 
+
 @app.command()
-def summarize_json(input_file: Annotated[Path, typer.Argument(help="JSON file to summarize")], output_file: Annotated[Path, typer.Argument(help="Output JSON file path")]):
+def summarize_json(
+    input_file: Annotated[Path, typer.Argument(help="JSON file to summarize")],
+    output_file: Annotated[Path, typer.Argument(help="Output JSON file path")],
+):
     """
     Summarize contents of a JSON file and output to another JSON file.
     """
-    with open(input_file, 'r', encoding='utf-8') as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         data = json_module.load(f)
 
-    summarized_data = {}
+    data = json_to_data_converter(data)
+    summarized_data = process_data(data)
 
-    for main_title, sub_sections in data.items():
-        summarized_data[main_title] = {}
-        for sub_title, content in sub_sections.items():
-            summarized_data[main_title][sub_title] = summarize_text(content)
-
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         json_module.dump(summarized_data, f, indent=2)
 
     print(f"Summarized JSON written to {output_file}")
@@ -147,6 +155,22 @@ def json_to_data(
 
 
 @app.command()
+def json_to_latex(
+    filename: Annotated[Path, typer.Argument(help="JSON file to parse")],
+):
+    """
+    Convert json to latex
+    """
+    with redirect_stdout(os.devnull):
+        dictionary = json_module.load(open(filename, "r"))
+        data = json_to_data_converter(dictionary)
+        data = process_data(data)
+        latex = data_to_latex_converter(data["title"], data["contents"])
+
+    print(latex)
+
+
+@app.command()
 def convert(
     filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
     output: Annotated[Path, typer.Argument(help="Output base folder path")] = "output",
@@ -164,6 +188,8 @@ def convert(
     ] = None,
 ):
     with redirect_stdout(os.devnull):
-        slides = pdf_to_slides(filename, output, langs, batch_multiplier, start_page, max_pages)
+        slides = pdf_to_slides(
+            filename, output, langs, batch_multiplier, start_page, max_pages
+        )
 
     print(slides)
