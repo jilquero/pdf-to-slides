@@ -16,6 +16,7 @@ from .services import markdown_to_dictionary
 from .services import summarize_text
 from .services import pdf_to_slides
 from .services import process_data
+from .services import tex_to_pdf
 from .converters import json_to_data as json_to_data_converter
 from .converters import data_to_latex as data_to_latex_converter
 

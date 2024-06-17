@@ -5,6 +5,7 @@ from .summarize_text import summarize_text
 from .translate_text import translate_text
 from .process_data import process_data
 from .pdf_to_slides import pdf_to_slides
+from .tex_to_pdf import tex_to_pdf
 
 __all__ = [
     "pdf_to_markdown",
@@ -14,4 +15,5 @@ __all__ = [
     "translate_text",
     "process_data",
     "pdf_to_slides",
+    "tex_to_pdf",
 ]
