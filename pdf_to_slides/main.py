@@ -10,6 +10,7 @@ from typing import Optional
 from typing_extensions import Annotated
 from contextlib import redirect_stdout
 
+from .services import data_to_latex
 from .services import pdf_to_markdown
 from .services import markdown_to_dictionary
 from .services import summarize_text
@@ -105,6 +106,17 @@ def summarize(
         summary = summarize_text(text)
 
     print(summary)
+
+
+@app.command()
+def template():
+    """
+    Convert data to latex
+    """
+    with redirect_stdout(os.devnull):
+        latex = data_to_latex()
+
+    print(latex)
 
 
 @app.command()
