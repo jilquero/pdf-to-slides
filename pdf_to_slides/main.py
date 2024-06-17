@@ -10,11 +10,13 @@ from typing import Optional
 from typing_extensions import Annotated
 from contextlib import redirect_stdout
 
+from .services import data_to_latex
 from .services import pdf_to_markdown
 from .services import markdown_to_dictionary
 from .services import summarize_text
 from .services import pdf_to_slides
 from .services import process_data
+from .services import tex_to_pdf
 from .converters import json_to_data as json_to_data_converter
 from .converters import data_to_latex as data_to_latex_converter
 
@@ -108,6 +110,17 @@ def summarize(
 
 
 @app.command()
+def template():
+    """
+    Convert data to latex
+    """
+    with redirect_stdout(os.devnull):
+        latex = data_to_latex()
+
+    print(latex)
+
+
+@app.command()
 def summarize_json(
     input_file: Annotated[Path, typer.Argument(help="JSON file to summarize")],
     output_file: Annotated[Path, typer.Argument(help="Output JSON file path")],
@@ -182,9 +195,7 @@ def convert(
     ] = None,
 ):
     with redirect_stdout(os.devnull):
-        slides = pdf_to_slides(
-            filename, output, langs, batch_multiplier, start_page, max_pages
-        )
+        slides = pdf_to_slides(filename, langs, batch_multiplier, start_page, max_pages)
 
     with open(output, "w", encoding="utf-8") as f:
         f.write(slides)

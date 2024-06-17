@@ -13,6 +13,9 @@ env.install_gettext_translations(translations)
 
 title_template = env.get_template("title.tex")
 text_template = env.get_template("text.tex")
+bullet_list_template = env.get_template("bullet_list.tex")
+image_template = env.get_template("image.tex")
+table_template = env.get_template("table.tex")
 bibliography_template = env.get_template("bibliography.tex")
 conclusion_template = env.get_template("conclusion.tex")
 document_template = env.get_template("document.tex")
@@ -35,10 +38,27 @@ def data_to_latex(
 
     content_renders = []
     for content in contents:
-        content_render = text_template.render(
-            title=content["title"],
-            content=content["content"],
-        )
+        if "text" in content:
+            content_render = text_template.render(
+                title=content["title"],
+                text=content["text"],
+            )
+        elif "image" in content:
+            content_render = image_template.render(
+                title=content["title"],
+                image=content["image"],
+            )
+        elif "bullet_points" in content:
+            content_render = bullet_list_template.render(
+                title=content["title"],
+                bullet_points=content["bullet_points"],
+            )
+        elif "table" in content:
+            content_render = table_template.render(
+                title=content["title"],
+                table=content["table"],
+            )
+
         content_renders.append(content_render)
 
     bibliography_render = None

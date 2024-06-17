@@ -6,11 +6,10 @@ def process_data(data: dict) -> dict:
     """
     Process data
     """
-    data |= {
+    return {
         "title": translate_text(data.get("title", "")),
         "contents": [process_content(x) for x in data.get("contents", [])],
     }
-    return data
 
 
 def process_content(content: dict) -> dict:
