@@ -1,19 +1,23 @@
+import os
+import sys
 import typer
 import tempfile
-import spacy
-import en_core_web_sm  # noqa: F401
-import pytextrank  # noqa: F401
+import json as json_module
 
-
+from pprint import pprint
+from pathlib import Path
 from typing import Optional
 from typing_extensions import Annotated
-from .converters import pdf_to_markdown
-from .converters import markdown_to_json
-from .summarize import *
+from contextlib import redirect_stdout
 
-
-example_text_en = """Convolutional neural network (CNN) is a regularized type of feed-forward neural network that learns feature engineering by itself via filters (or kernel) optimization. Vanishing gradients and exploding gradients, seen during backpropagation in earlier neural networks, are prevented by using regularized weights over fewer connections. For example, for each neuron in the fully-connected layer, 10,000 weights would be required for processing an image sized 100 × 100 pixels. However, applying cascaded convolution (or cross-correlation) kernels, only 25 neurons are required to process 5x5-sized tiles. Higher-layer features are extracted from wider context windows, compared to lower-layer features. CNNs are also known as shift invariant or space invariant artificial neural networks (SIANN), based on the shared-weight architecture of the convolution kernels or filters that slide along input features and provide translation-equivariant responses known as feature maps. Counter-intuitively, most convolutional neural networks are not invariant to translation, due to the downsampling operation they apply to the input. Feed-forward neural networks are usually fully connected networks, that is, each neuron in one layer is connected to all neurons in the next layer. The "full connectivity" of these networks makes them prone to overfitting data. Typical ways of regularization, or preventing overfitting, include: penalizing parameters during training (such as weight decay) or trimming connectivity (skipped connections, dropout, etc.) Robust datasets also increase the probability that CNNs will learn the generalized principles that characterize a given dataset rather than the biases of a poorly-populated set. Convolutional networks were inspired by biological processes in that the connectivity pattern between neurons resembles the organization of the animal visual cortex. Individual cortical neurons respond to stimuli only in a restricted region of the visual field known as the receptive field. The receptive fields of different neurons partially overlap such that they cover the entire visual field. CNNs use relatively little pre-processing compared to other image classification algorithms. This means that the network learns to optimize the filters (or kernels) through automated learning, whereas in traditional algorithms these filters are hand-engineered. This independence from prior knowledge and human intervention in feature extraction is a major advantage."""
-
+from .services import data_to_latex
+from .services import pdf_to_markdown
+from .services import markdown_to_dictionary
+from .services import summarize_text
+from .services import pdf_to_slides
+from .services import process_data
+from .converters import json_to_data as json_to_data_converter
+from .converters import data_to_latex as data_to_latex_converter
 
 app = typer.Typer()
 
@@ -27,8 +31,8 @@ def callback():
 
 @app.command()
 def md(
-    filename: Annotated[str, typer.Argument(help="PDF file to parse")],
-    output: Annotated[str, typer.Argument(help="Output base folder path")] = "output",
+    filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
+    output: Annotated[Path, typer.Argument(help="Output base folder path")] = "output",
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,
@@ -45,21 +49,28 @@ def md(
     """
     Convert pdf to markdown
     """
-    langs = langs.split(",") if langs else None
-    pdf_to_markdown(filename, output, langs, batch_multiplier, start_page, max_pages)
+    with redirect_stdout(os.devnull):
+        markdown = pdf_to_markdown(
+            filename, output, langs, batch_multiplier, start_page, max_pages
+        )
+
+    print(markdown)
 
 
 @app.command()
-def json(filename: Annotated[str, typer.Argument(help="Markdown file to parse")]):
+def json(filename: Annotated[Path, typer.Argument(help="Markdown file to parse")]):
     """
     Convert markdown to json
     """
-    markdown_to_json(filename)
+    with redirect_stdout(os.devnull):
+        dict = markdown_to_dictionary(filename)
+
+    print(json_module.dump(json_module.load(dict), indent=2))
 
 
 @app.command()
 def pdf_to_json(
-    filename: Annotated[str, typer.Argument(help="Markdown file to parse")],
+    filename: Annotated[Path, typer.Argument(help="Markdown file to parse")],
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,
@@ -76,19 +87,116 @@ def pdf_to_json(
     """
     Convert pdf to json
     """
-    langs = langs.split(",") if langs else None
-    with tempfile.TemporaryDirectory() as tempdir:
-        path = pdf_to_markdown(filename, tempdir, langs, batch_multiplier, start_page, max_pages)
-        markdown_to_json(f"{path}/{path.split("/")[-1]}.md")
+    with tempfile.TemporaryDirectory() as tempdir, redirect_stdout(sys.stderr):
+        path = pdf_to_markdown(
+            filename, tempdir, langs, batch_multiplier, start_page, max_pages
+        )
+        markdown_file = os.path.join(path, f"{os.path.basename(path)}.md")
+        dict_data = markdown_to_dictionary(markdown_file)
+
+    json_output = json_module.dumps(dict_data, indent=2)
+    print(json_output)
 
 
 @app.command()
-def google():   # --- 2 min 10 sec --- readibility 3/3
-    print("Summary: google")
-    print(summarize_google(example_text_en))
+def summarize(
+    text: Annotated[str, typer.Argument(help="Text to summarize")],
+):
+    with redirect_stdout(os.devnull):
+        summary = summarize_text(text)
+
+    print(summary)
+
 
 @app.command()
-def t5():   # --- 3 min 20 sec --- readibility 2.5/3
-    print("Summary: t5")
-    print(summarize_t5(example_text_en))
+def template():
+    """
+    Convert data to latex
+    """
+    with redirect_stdout(os.devnull):
+        latex = data_to_latex()
 
+    print(latex)
+
+
+@app.command()
+def summarize_json(
+    input_file: Annotated[Path, typer.Argument(help="JSON file to summarize")],
+    output_file: Annotated[Path, typer.Argument(help="Output JSON file path")],
+):
+    """
+    Summarize contents of a JSON file and output to another JSON file.
+    """
+    with open(input_file, "r", encoding="utf-8") as f:
+        data = json_module.load(f)
+
+    data = json_to_data_converter(data)
+    summarized_data = process_data(data)
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        json_module.dump(summarized_data, f, indent=2)
+
+    print(f"Summarized JSON written to {output_file}")
+
+
+@app.command()
+def json_to_data(
+    filename: Annotated[Path, typer.Argument(help="JSON file to parse")],
+):
+    """
+    Convert json to latex
+    """
+    with redirect_stdout(os.devnull):
+        dictionary = json_module.load(open(filename, "r", encoding="utf-8"))
+        data = json_to_data_converter(dictionary)
+        data = process_data(data)
+
+    pprint(data)
+
+
+@app.command()
+def json_to_latex(
+    filename: Annotated[Path, typer.Argument(help="JSON file to parse")],
+    output_file: Annotated[Path, typer.Argument(help="Output JSON file path")],
+):
+    """
+    Convert json to latex
+    """
+    with redirect_stdout(os.devnull):
+        dictionary = json_module.load(open(filename, "r", encoding="utf-8"))
+        data = json_to_data_converter(dictionary)
+        data = process_data(data)
+        latex = data_to_latex_converter(data["title"], data["contents"])
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(latex)
+
+    print(latex)
+
+
+@app.command()
+def convert(
+    filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
+    output: Annotated[
+        Path, typer.Argument(help="Output base folder path")
+    ] = "output.tex",
+    langs: Annotated[
+        Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
+    ] = None,
+    batch_multiplier: Annotated[
+        int, typer.Option(help="How much to increase batch sizes")
+    ] = 2,
+    start_page: Annotated[
+        Optional[int], typer.Option(help="Page to start processing at")
+    ] = None,
+    max_pages: Annotated[
+        Optional[int], typer.Option(help="Maximum number of pages to parse")
+    ] = None,
+):
+    with redirect_stdout(os.devnull):
+        slides = pdf_to_slides(filename, langs, batch_multiplier, start_page, max_pages)
+
+    with open(output, "w", encoding="utf-8") as f:
+        f.write(slides)
+
+    print(slides)

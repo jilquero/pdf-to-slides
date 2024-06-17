@@ -1,0 +1,14 @@
+\subsection{ {{- _("Bibliography") -}} }
+\begin{frame}
+  \setbeamercovered{transparent}
+  \frametitle{ {{- _("Bibliography") -}} }
+  \begin{thebibliography}{ {{- citations|length -}} }
+    {% for citation in citations %}
+    \uncover<{{ loop.index }}->{
+      \setbeamertemplate{bibliography item}[text]
+      \bibitem{ {{- citation.ref -}} }
+      {{ citation.citation }}
+    }
+    {% endfor %}
+  \end{thebibliography}
+\end{frame}

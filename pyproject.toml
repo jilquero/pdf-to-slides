@@ -15,9 +15,10 @@ typer = "^0.12.3"
 markdown-to-json = "^2.1.1"
 spacy = "^3.7.5"
 pytextrank = "^3.3.0"
-sentencepiece = "^0.2.0"
-transformers = "^4.41.2"
-protobuf = "^5.27.1"
+jinja2 = "^3.1.4"
+babel = "^2.15.0"
+googletrans = "4.0.0-rc1"
+nltk = "^3.8.1"
 
 
 [build-system]

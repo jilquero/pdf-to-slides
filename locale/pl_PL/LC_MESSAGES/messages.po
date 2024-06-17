@@ -1,0 +1,38 @@
+# Polish (Poland) translations for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-06-11 20:58+0200\n"
+"PO-Revision-Date: 2024-06-11 21:08+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: pl_PL\n"
+"Language-Team: pl_PL <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+msgid "Presentation"
+msgstr "Prezentacja"
+
+msgid "Content"
+msgstr "Zawartość"
+
+msgid "Bibliography"
+msgstr "Bibliografia"
+
+msgid "Conclusion"
+msgstr "Podsumowanie"
+
+msgid "Agenda"
+msgstr "Agenda"
+
+msgid "Thank you for your attention!"
+msgstr "Dziękuję za uwagę!\\\\[1ex] W przypadku jakichkolwiek pytań lub dalszych dyskusji, prosimy o kontakt\\\\[2ex]"

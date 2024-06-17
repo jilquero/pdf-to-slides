@@ -1,0 +1,24 @@
+\title{ {{- title -}} }
+\author{
+{%- for author in authors if author.name -%}
+{{ author.name }}\inst{ {{- author.university_id or '' -}} }
+{%- if not loop.last -%}
+{{ ' \\and ' }}
+{%- endif -%}
+{%- endfor -%}
+}
+\institute{
+{%- for university in universities if university.name -%}
+\inst{ {{- university.id -}} }{ {{- university.name -}} }
+{%- if not loop.last -%}
+{{ ' \\and ' }}
+{%- endif -%}
+{%- endfor -%}
+}
+\date{
+{%- if city is not none -%}
+{{- city -}}, \today
+{%- endif -%}
+}
+\begin{document}
+\maketitle

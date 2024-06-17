@@ -1,0 +1,27 @@
+\documentclass[red]{beamer}
+\usetheme[progressbar=frametitle]{metropolis}
+
+\usepackage{graphicx}
+\usepackage{cmap}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+
+{{title}}
+
+\section{ {{- _("Presentation") -}} }
+{% include 'agenda.tex' %}
+
+\section{ {{- _("Content") -}} }
+{% for content in contents %}
+{{ content }}
+{% endfor %}
+
+{% if bibliography is not none %}
+\section{ {{- _("Bibliography") -}} }
+{{ bibliography }}
+{% endif %}
+
+\section{ {{- _("Conclusion") -}} }
+{{ conclusion }}
+
+\end{document}
