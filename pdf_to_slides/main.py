@@ -17,8 +17,10 @@ from .services import summarize_text
 from .services import pdf_to_slides
 from .services import process_data
 from .services import tex_to_pdf
+from .services import call_openai_api
 from .converters import json_to_data as json_to_data_converter
 from .converters import data_to_latex as data_to_latex_converter
+
 
 app = typer.Typer()
 
@@ -201,3 +203,27 @@ def convert(
         f.write(slides)
 
     print(slides)
+
+
+@app.command()
+def openai_api(
+    markdown_file: Annotated[
+        Path, typer.Argument(help="Markdown file to summarize and translate")
+    ] = None,
+    formatting_file: Annotated[
+        Path, typer.Argument(help="JSON structure template")
+    ] = None,
+    output: Annotated[
+        Path, typer.Argument(help="Output base folder path")
+    ] = "output.json",
+):
+    """
+    Summarize, translate and convert markdown file to JSON
+    """
+    with redirect_stdout(os.devnull):
+        call = call_openai_api(markdown_file, formatting_file)
+
+    with open(output, "w", encoding="utf-8") as f:
+        f.write(call)
+
+    print(call)
