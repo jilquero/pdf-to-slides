@@ -24,10 +24,11 @@ def pdf_to_slides(
         if filename.suffix == ".pdf"
         else markdown_with_images(filename)
     )
-
+    markdown = markdown.replace('"', "'").replace("&", "and")
     data = openai_api(markdown)
-
     data = json.loads(data)
+    print(data)
+
     latex = data_to_latex(
         data.get("title", ""),
         data.get("contents", []),
@@ -36,6 +37,9 @@ def pdf_to_slides(
         data.get("universities", []),
         data.get("bibliography", []),
     )
+    latex = latex.replace("%", r"\%")
+    print(latex)
+
     pdf = tex_to_pdf(latex, images)
 
     return pdf

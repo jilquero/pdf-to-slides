@@ -5,7 +5,7 @@
     \centering
     \frametitle{ {{- title -}} }
     \resizebox{\columnwidth}{!}{
-    \begin{tabular}{ccc}
+    \begin{tabular}{ {{- columns -}} }
       \hline
       {% set colsep_joiner = joiner(colsep) %}
       {% for col in table["headers"] %} {{ colsep_joiner() }} \textbf{ {{- col -}} } {%- endfor %} \\        

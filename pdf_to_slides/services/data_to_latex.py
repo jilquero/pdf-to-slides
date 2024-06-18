@@ -58,7 +58,11 @@ def render_content(content: Dict) -> str:
         return text_template.render(title=content["title"], text=content["text"])
 
     if "image" in content:
-        return image_template.render(title=content["title"], image=content["image"])
+        return image_template.render(
+            title=content["title"],
+            image=content["image"].lower(),
+            caption=content.get("caption", None),
+        )
 
     if "bullet_points" in content:
         return bullet_list_template.render(
@@ -66,4 +70,9 @@ def render_content(content: Dict) -> str:
         )
 
     if "table" in content:
-        return table_template.render(title=content["title"], table=content["table"])
+        return table_template.render(
+            title=content["title"],
+            table=content["table"],
+            columns=max(len(content["table"]["headers"]), len(content["table"]["rows"]))
+            * "c",
+        )
