@@ -49,7 +49,7 @@ def md(
     assert os.path.exists(filename), f"File {filename} does not exist"
     assert filename.suffix == ".pdf", f"File {filename} is not a PDF file"
 
-    markdown, images, _ = pdf_to_markdown(
+    markdown, images = pdf_to_markdown(
         filename, langs, batch_multiplier, start_page, max_pages
     )
 
@@ -144,7 +144,7 @@ def convert(
     filename: Annotated[Path, typer.Argument(help="PDF file to parse")],
     output: Annotated[
         Path, typer.Argument(help="Output base folder path")
-    ] = "output.tex",
+    ] = "output.pdf",
     langs: Annotated[
         Optional[str], typer.Option(help="Languages to use for OCR, comma separated")
     ] = None,
