@@ -11,10 +11,10 @@ def pdf_to_markdown(
     batch_multiplier: int = 2,
     start_page: int = None,
     max_pages: int = None,
-) -> Tuple[str, Dict[str, Image.Image], Dict]:
+) -> Tuple[str, Dict[str, Image.Image]]:
 
     model_lst = load_all_models()
-    full_text, images, out_meta = convert_single_pdf(
+    full_text, images, _ = convert_single_pdf(
         filename,
         model_lst,
         max_pages=max_pages,
@@ -23,4 +23,4 @@ def pdf_to_markdown(
         start_page=start_page,
     )
 
-    return full_text, images, out_meta
+    return full_text, images

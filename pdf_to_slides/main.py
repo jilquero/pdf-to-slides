@@ -47,7 +47,7 @@ def md(
     Convert pdf to markdown
     """
     assert os.path.exists(filename), f"File {filename} does not exist"
-    assert filename.name.endswith(".pdf"), f"File {filename} is not a PDF file"
+    assert filename.suffix == ".pdf", f"File {filename} is not a PDF file"
 
     markdown, images, _ = pdf_to_markdown(
         filename, langs, batch_multiplier, start_page, max_pages
@@ -76,7 +76,7 @@ def json(
     Convert markdown to json
     """
     assert os.path.exists(filename), f"File {filename} does not exist"
-    assert filename.name.endswith(".md"), f"File {filename} is not a markdown file"
+    assert filename.suffix == ".md", f"File {filename} is not a markdown file"
 
     with open(filename, "r", encoding="utf-8") as f:
         markdown = f.read()
@@ -98,7 +98,7 @@ def latex(
     Convert json to latex
     """
     assert os.path.exists(filename), f"File {filename} does not exist"
-    assert filename.name.endswith(".json"), f"File {filename} is not a json file"
+    assert filename.suffix == ".json", f"File {filename} is not a json file"
 
     with open(filename, "r", encoding="utf-8") as f:
         json = f.read()
@@ -128,7 +128,7 @@ def pdf(
     Convert latex to pdf
     """
     assert os.path.exists(filename), f"File {filename} does not exist"
-    assert filename.name.endswith(".tex"), f"File {filename} is not a tex file"
+    assert filename.suffix == ".tex", f"File {filename} is not a tex file"
 
     with open(filename, "r", encoding="utf-8") as f:
         latex = f.read()
@@ -163,7 +163,7 @@ def convert(
     """
     assert os.path.exists(filename), f"File {filename} does not exist"
     assert any(
-        filename.name.endswith(ext) for ext in [".pdf", ".md"]
+        filename.suffix == ext for ext in [".pdf", ".md"]
     ), f"File {filename} is not a PDF or markdown file"
 
     langs = langs.split(",") if langs else None
