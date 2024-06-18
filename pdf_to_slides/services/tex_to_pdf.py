@@ -25,7 +25,7 @@ def tex_to_pdf(latex: str, images: Dict[str, Image.Image] = {}) -> BinaryIO:
             args = [
                 pdflatex_path,
                 "-output-directory=" + temp_dir,
-                tex_file_path,
+                "document.tex",
                 "document.pdf",
             ]
             subprocess.run(args, check=True)
