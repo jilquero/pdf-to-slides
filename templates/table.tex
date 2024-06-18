@@ -4,16 +4,17 @@
   \begin{table}[t]
     \centering
     \frametitle{ {{- title -}} }
+    \resizebox{\columnwidth}{!}{
     \begin{tabular}{ccc}
       \hline
       {% set colsep_joiner = joiner(colsep) %}
-      {% for col in table["header"] %} {{ colsep_joiner() }} \textbf{ {{- col -}} } {%- endfor %} \\        
+      {% for col in table["headers"] %} {{ colsep_joiner() }} \textbf{ {{- col -}} } {%- endfor %} \\        
       \hline
       {% for row in table["rows"] %}
       {% set colsep_joiner = joiner(colsep) %}
       {% for col in row %} {{ colsep_joiner() }} {{- col -}} {% endfor %} \\
       {% endfor %}        
       \hline
-    \end{tabular}
+    \end{tabular}}
   \end{table}
 \end{frame}

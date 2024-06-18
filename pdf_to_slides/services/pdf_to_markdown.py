@@ -1,20 +1,26 @@
+from PIL import Image
 from pathlib import Path
-from ..converters import pdf_to_markdown as pdf_to_markdown_converter
+from typing import Dict, Tuple
+from marker.convert import convert_single_pdf
+from marker.models import load_all_models
 
 
 def pdf_to_markdown(
     filename: Path,
-    output: str = "output",
     langs: list[str] = None,
     batch_multiplier: int = 2,
     start_page: int = None,
     max_pages: int = None,
-) -> str:
-    """
-    Pdf and markdown to slides converter
-    """
-    langs = langs.split(",") if langs else None
-    path = pdf_to_markdown_converter(
-        filename, output, langs, batch_multiplier, start_page, max_pages
+) -> Tuple[str, Dict[str, Image.Image], Dict]:
+
+    model_lst = load_all_models()
+    full_text, images, out_meta = convert_single_pdf(
+        filename,
+        model_lst,
+        max_pages=max_pages,
+        langs=langs,
+        batch_multiplier=batch_multiplier,
+        start_page=start_page,
     )
-    return path
+
+    return full_text, images, out_meta

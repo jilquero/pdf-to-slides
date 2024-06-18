@@ -1,0 +1,44 @@
+{
+  "title": "",
+  "bibliography": [
+    {
+      "reference_in_text": "",
+      "citation": ""
+    }
+  ],
+  "universities": [
+    {
+      "name": "",
+      "id": ""
+    }
+  ],
+  "authors": [
+    {
+      "name": "",
+      "email": "",
+      "university_id": ""
+    }
+  ],
+  "contents": [
+    {
+      "title": "",
+      "text": ""
+    },
+    {
+      "title": "",
+      "image": "",
+      "caption": ""
+    },
+    {
+      "title": "",
+      "bullet_points": ["", "", ""]
+    },
+    {
+      "title": "",
+      "table": {
+        "headers": ["", "", ""],
+        "rows": [["", "", ""]]
+      }
+    }
+  ]
+}

@@ -1,32 +1,31 @@
 import os
+import inspect
+import importlib.resources
+
+from io import BytesIO
 from openai import OpenAI
 from dotenv import load_dotenv
-from pathlib import Path
 
 
-def call_openai_api(
-    markdown_file: Path,
-    formatting_file: Path,
+def openai_api(
+    markdown: str,
 ) -> str:
-    load_dotenv()  # take environment variables
+    load_dotenv()
     api_key = os.getenv("OPENAI_PROJECT_API_KEY")
     if api_key is None:
         raise ValueError("api_key is not defined in .env file")
 
-    # ----------------------------------------------------------STEP_1----------------------------------------------------------
     client = OpenAI(api_key=api_key)
 
-    # files to send to chat-api
-    markdown_file_id = markdown_file
-    formatting_file_id = formatting_file
-
-    # ----------------------------------------------------------STEP_2----------------------------------------------------------
     # Create a vector store caled "Presentation Base-Files"
     vector_store = client.beta.vector_stores.create(name="Presentation Base-Files")
 
+    markdown_file = BytesIO(bytes(markdown, encoding="utf-8"))
+    markdown_file.name = "document.md"
+    formatting_file = importlib.resources.files("resources").joinpath("schema.json")
+
     # Ready the files for upload to OpenAI
-    file_paths = [markdown_file_id]
-    file_streams = [open(path, "rb") for path in file_paths]
+    file_streams = [markdown_file]
 
     # Use the upload and poll SDK helper to upload the files, add them to the vector store,
     # and poll the status of the file batch for completion.
@@ -34,26 +33,28 @@ def call_openai_api(
         vector_store_id=vector_store.id, files=file_streams
     )
 
-    # ---------------------------------------------------------------------------------------------------------------------------
-
     assistant = client.beta.assistants.create(
         name="File summarizer to Presentation Assistant",
-        instructions="This GPT assists with summarizing Markdown text into bullet points, translating to Polish, and inserting a nested JSON object for images. The output should be a JSON file with a specific structure, ensuring images fit well within the summary. The JSON structure is: {vector_store.id}. You can modify this structure to better fit the task. You are assistant that creates json file based on markdown provided. Use your skills to summarize and translate the topics from the markdown into cohesive output. In the case when authors, university names and bibliography (references) not specified omit them in result json",
+        instructions=inspect.cleandoc(
+            """This GPT assists with summarizing Markdown text into bullet points, translating to Polish, and inserting a nested JSON object for images.
+            The output should be a JSON file with a specific structure, ensuring images fit well within the summary.
+            The JSON structure is: {vector_store.id}. You can modify this structure to better fit the task.
+            You are assistant that creates json file based on markdown provided.
+            Use your skills to summarize and translate the topics from the markdown into cohesive output.
+            In the case when authors, university names and bibliography (references) not specified omit them in result json"""
+        ),
         model="gpt-4o",
         tools=[{"type": "file_search"}],
     )
-
-    # ----------------------------------------------------------STEP_3----------------------------------------------------------
 
     assistant = client.beta.assistants.update(
         assistant_id=assistant.id,
         tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
     )
 
-    # ----------------------------------------------------------STEP_4----------------------------------------------------------
     # Upload the user provided file to OpenAI
     message_file = client.files.create(
-        file=open(formatting_file_id, "rb"), purpose="assistants"
+        file=open(formatting_file, "rb"), purpose="assistants"
     )
 
     # Create a thread and attach the file to the message
@@ -70,7 +71,6 @@ def call_openai_api(
         ]
     )
 
-    # ----------------------------------------------------------STEP_5----------------------------------------------------------
     # Use the create and poll SDK helper to create a run and poll the status of
     # the run until it's in a terminal state.
 
@@ -93,4 +93,12 @@ def call_openai_api(
             cited_file = client.files.retrieve(file_citation.file_id)
             citations.append(f"[{index}] {cited_file.filename}")
 
-    return message_content.value
+    return strip_markdown(message_content.value)
+
+
+def strip_markdown(markdown: str) -> str:
+    json_start = markdown.find("```json")
+    if json_start == -1:
+        return markdown
+    json_end = markdown.find("```", json_start + 1)
+    return markdown[json_start + 7 : json_end]  # noqa E203

@@ -61,7 +61,7 @@ Installing the current project: pdf-to-slides (0.1.0)
 
 ```
 
-Make sure that you have added rour LaTex interpreter to the system PATH - to ensure that pdf file can generate from LaTex document inside the solution.
+Make sure that you have added your LaTex interpreter to the system PATH and you have installed all the required packages such as Polish - to ensure that pdf file can generate from LaTex document inside the solution.
 
 ## Usage
 
@@ -69,7 +69,7 @@ Make sure that you have added rour LaTex interpreter to the system PATH - to ens
 
 To convert a Markdown file (raletive path) to a LaTeX presentation, use the following command:
 
-```
+```python
 pts convert markdown.md output.pdf
 ```
 
@@ -85,49 +85,25 @@ Note that all commands should be executed in virtual environment (i.e. inside po
 - **Convert PDF to Markdown:**:
 
 ```python
-pts md <path/article.pdf> <*path/output.md>
+pts md <path/article.pdf> <path/output.md>
 ```
 
 - **Convert Markdown to JSON:**:
 
 ```python
-pts json <path/markdown.md> <*path/output.json>
+pts json <path/markdown.md> <path/output.json>
 ```
 
-- **Convert PDF to JSON:**:
+- **Convert JSON to LaTeX:**:
 
 ```python
-pts pdf-to-json <path/article.pdf> <*path/output.json>
+pts latex <path/markdown.md> <path/output.json>
 ```
 
-- **Summarize Text:**:
+- **Convert LaTeX to PDF:**:
 
 ```python
-pts summarize "text to summarize on the cli"
-```
-
-- **Generate LaTex Template:**:
-
-```python
-pts template
-```
-
-- **Summarize JSON and output to JSON:**:
-
-```python
-pts summarize-json <path/input.json> <*path/output.json>
-```
-
-- **Convert JSON to data:**:
-
-```python
-pts json-to-data <path/input.json>
-```
-
-- **Convert JSON to LaTex:**:
-
-```python
-pts json-to-latex <path/input.json> <*path/output.latex>
+pts pdf <path/markdown.md> <path/output.json>
 ```
 
 ## License

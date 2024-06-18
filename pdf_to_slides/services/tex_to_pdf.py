@@ -1,34 +1,39 @@
-import subprocess
 import os
 import shutil
 import tempfile
+import subprocess
 
-def tex_to_pdf(tex_file_path, pdf_output_path):
-    if not os.path.isfile(tex_file_path):
-        raise FileNotFoundError(f"No such file: '{tex_file_path}'")
-    
+from PIL import Image
+from typing import BinaryIO, Dict
+
+
+def tex_to_pdf(latex: str, images: Dict[str, Image.Image] = {}) -> BinaryIO:
     pdflatex_path = shutil.which("pdflatex")
     if pdflatex_path is None:
         raise FileNotFoundError("pdflatex executable not found in system PATH")
-    
+
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
-            src_dir = os.path.dirname(tex_file_path)
-            dest_dir = os.path.join(temp_dir, os.path.basename(src_dir))
-            shutil.copytree(src_dir, dest_dir)
-            
-            temp_tex_file_path = os.path.join(dest_dir, os.path.basename(tex_file_path))
-            
-            subprocess.run([pdflatex_path, "-output-directory=" + dest_dir, temp_tex_file_path], check=True)
-            print("PDF successfully generated")
-            
-            generated_pdf_path = os.path.join(dest_dir, os.path.splitext(os.path.basename(tex_file_path))[0] + ".pdf")
-            
-            if os.path.isfile(pdf_output_path):
-                os.remove(pdf_output_path)
-            
-            shutil.move(generated_pdf_path, pdf_output_path)
-            print(f"PDF moved to {pdf_output_path}")
+            tex_file_path = os.path.join(temp_dir, "document.tex")
+            with open(tex_file_path, "w", encoding="utf-8") as f:
+                f.write(latex)
+
+            for filename, image in images.items():
+                image_path = os.path.join(temp_dir, filename)
+                image.save(image_path, "PNG")
+
+            args = [
+                pdflatex_path,
+                "-output-directory=" + temp_dir,
+                tex_file_path,
+                "document.pdf",
+            ]
+            subprocess.run(args, check=True)
+            subprocess.run(args, check=True)
+
+            pdf_file_path = os.path.join(temp_dir, "document.pdf")
+            with open(pdf_file_path, "rb") as f:
+                return f.read()
 
         except subprocess.CalledProcessError as e:
             print(f"An error occurred: {e}")

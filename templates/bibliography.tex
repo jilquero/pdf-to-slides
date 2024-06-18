@@ -6,7 +6,7 @@
     {% for citation in citations %}
     \uncover<{{ loop.index }}->{
       \setbeamertemplate{bibliography item}[text]
-      \bibitem{ {{- citation.ref -}} }
+      \bibitem{ {{- citation.reference_in_text -}} }
       {{ citation.citation }}
     }
     {% endfor %}
